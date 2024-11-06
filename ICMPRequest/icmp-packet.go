@@ -6,17 +6,6 @@ import (
         "os"
 )
 
-func ReadPing(conn net.Conn) {
-	// Read the response
-	buf := make([]byte, 1500)
-	n, err := conn.Read(buf)
-	if err != nil {
-		fmt.Println("Error reading from connection:", err)
-		os.Exit(1)
-	}
-
-	fmt.Printf("Received %d bytes: %v\n", n, buf[:n])
-}
 
 func SendPing(conn net.Conn) {
         // Send an ICMP echo request
@@ -39,5 +28,18 @@ func Run(ip *string) {
 
 	SendPing(conn)
 	ReadPing(conn)
+}
+
+func ReadPing(conn net.Conn) {
+	// Read the response
+	buf := make([]byte, 1500)
+	n, err := conn.Read(buf)
+	if err != nil {
+		fmt.Println("Error reading from connection:", err)
+		os.Exit(1)
+	}
+
+	fmt.Printf("Received %d bytes: %v\n", n, buf[:n])
+
 }
 
