@@ -7,7 +7,6 @@ import (
 )
 
 func sendIP(ip string) {
-	
 	conn, err := net.Dial("ip4:icmp", ip)
 	if err != nil {
 		fmt.Println("Error dialing:", err)
@@ -19,9 +18,16 @@ func sendIP(ip string) {
 
 func Run(ip string) {
 	// Check if is a notation IP range:
-	isValidisCidr := isCidrVAlidIpv4(ip)
-	if isValidisCidr {
-		handleCidr(ip)
+	isValidisCidr4 := isCidrVAlidIpv4(ip)
+	isValidisCidr6  :=  isCidrVAlidIpv6(ip)
+
+	if isValidisCidr4 {
+		handleCidr4(ip)
+	} 
+
+	if isValidisCidr6 {
+		handleCidr6(ip)
+
 	} else {
 		sendIP(ip)
 	}
