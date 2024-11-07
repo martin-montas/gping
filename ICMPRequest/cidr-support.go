@@ -6,6 +6,9 @@ import (
 	"net"
 	"strconv"
 )
+func isCidrVAlidIpv6(ip string) bool {
+	return false
+}
 
 func isCidrVAlidIpv4(ip string) bool {
 	// /0 to /32 are valid ranges.
@@ -26,7 +29,10 @@ func isCidrVAlidIpv4(ip string) bool {
 	return true 
 }
 
-func handleCidr(ip string) { 
+func handleCidr6(ip string) { 
+	return
+}
+func handleCidr4(ip string) { 
 	_, ipNet, err := net.ParseCIDR(ip)
 	if err != nil {
 		fmt.Println("Error parsing CIDR:", err)
