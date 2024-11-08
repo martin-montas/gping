@@ -2,6 +2,10 @@ package ICMPRequest
 
 import (
 	"fmt"
+	"github.com/google/gopacket"
+	"strings"
+	"strconv"
+	"log"
 	"syscall"
 	"net"
 	"os"
@@ -13,6 +17,7 @@ var icmpPacket = []byte{
 	0, 1,
 	72, 101, 108, 108, 111, 
 }
+
 
 func calculateChecksum() uint16 {
 	var sum uint32
@@ -27,10 +32,6 @@ func calculateChecksum() uint16 {
 	return uint16(^sum)
 }
 
-func sendSingleIP(ip string) {
-	pd, err := syscall.Socket(syscall.AF_INET, syscall.SOCK_RAW, syscall.IPPROTO_ICMP) 
-
-}
 
 func RunProgram(ip string) {
 	isValidisCidr4 := isCidrVAlidIpv4(ip)
@@ -41,7 +42,7 @@ func RunProgram(ip string) {
 	if isValidisCidr6 {
 		handleCidr6(ip)
 	} else {
-		sendSingleIP(ip)
+		sendPacket(ip)
 	}
 }
 
@@ -65,3 +66,46 @@ func incrementIP(ip net.IP) {
 	}
 }
 
+func stringToByte(ip string) [4]byte {
+	strResult := strings.Split(ip, ".")
+	var ipByte [4]byte
+	for index, value := range strResult {
+		intResult, err := strconv.Atoi(value)
+		if err != nil {
+			fmt.Errorf("Error converting string to int: %v", err)
+		}
+		ipByte[index] = byte(intResult)
+
+	}
+	return ipByte
+}
+
+func createRawSocket(ip string) (int ,[]byte, syscall.SockaddrInet4) {
+	sock, err := syscall.Socket(syscall.AF_INET, syscall.SOCK_RAW, syscall.IPPROTO_ICMP)
+	if err != nil {
+		log.Fatalf("Failed to create raw socket: %v", err)
+	}
+	defer syscall.Close(sock)
+	addr := syscall.SockaddrInet4{
+		Port: 0,
+		// Ip goes here
+		Addr: stringToByte(ip), 
+	}
+	packet := []byte{
+		8, 0,  // Type and Code for ICMP Echo Request
+		0, 0,  // Checksum (simplified; not valid in real use without proper calculation)
+		0, 1,  // Identifier
+		0, 1,  // Sequence number
+		'H', 'e', 'l', 'l', 'o', '!', 
+	}
+	return sock, packet, addr
+}
+
+func sendPacket(ip string) {
+	sock, packet, addr := createRawSocket(ip)
+	err := syscall.Sendto(sock, packet, 0, &addr)
+	if err != nil {
+		log.Fatalf("Failed to send packet: %v", err)
+	}
+	fmt.Println("Packet sent successfully!")
+}
