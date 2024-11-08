@@ -2,7 +2,6 @@ package ICMPRequest
 
 import (
 	"fmt"
-	"github.com/google/gopacket"
 	"strings"
 	"strconv"
 	"log"
@@ -72,7 +71,7 @@ func stringToByte(ip string) [4]byte {
 	for index, value := range strResult {
 		intResult, err := strconv.Atoi(value)
 		if err != nil {
-			fmt.Errorf("Error converting string to int: %v", err)
+			fmt.Printf("Error converting string to int: %v", err)
 		}
 		ipByte[index] = byte(intResult)
 
