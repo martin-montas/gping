@@ -2,38 +2,50 @@ package ICMPRequest
 
 import (
 	"fmt"
+	"syscall"
 	"net"
 	"os"
-)
 
-func sendIP(ip string) {
-	conn, err := net.Dial("ip4:icmp", ip)
-	if err != nil {
-		fmt.Println("Error dialing:", err)
-		os.Exit(1)
-	}
-	defer conn.Close()
-	readPing(conn)
+)
+var icmpPacket = []byte{
+	8, 0, 0, 0, 
+	0, 1,
+	0, 1,
+	72, 101, 108, 108, 111, 
 }
 
-func Run(ip string) {
-	// Check if is a notation IP range:
+func calculateChecksum() uint16 {
+	var sum uint32
+	for i := 0; i < len(icmpPacket)-1; i += 2 {
+		sum += uint32(icmpPacket[i])<<8 | uint32(icmpPacket[i+1])
+	}
+	if len(icmpPacket)%2 == 1 {
+		sum += uint32(icmpPacket[len(icmpPacket)-1]) << 8
+	}
+	sum = (sum >> 16) + (sum & 0xffff)
+	sum += (sum >> 16)
+	return uint16(^sum)
+}
+
+func sendSingleIP(ip string) {
+	pd, err := syscall.Socket(syscall.AF_INET, syscall.SOCK_RAW, syscall.IPPROTO_ICMP) 
+
+}
+
+func RunProgram(ip string) {
 	isValidisCidr4 := isCidrVAlidIpv4(ip)
 	isValidisCidr6  :=  isCidrVAlidIpv6(ip)
-
 	if isValidisCidr4 {
 		handleCidr4(ip)
 	} 
-
 	if isValidisCidr6 {
 		handleCidr6(ip)
-
 	} else {
-		sendIP(ip)
+		sendSingleIP(ip)
 	}
 }
 
-func readPing(conn net.Conn) {
+func readCurrentPing(conn net.Conn) {
 	// Read the response
 	buf := make([]byte, 1500)
 	n, err := conn.Read(buf)
@@ -52,3 +64,4 @@ func incrementIP(ip net.IP) {
 		}
 	}
 }
+
