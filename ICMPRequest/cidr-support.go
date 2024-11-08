@@ -8,7 +8,6 @@ import (
 )
 
 func isCidrVAlidIpv6(ip string) bool {
-	// /0 to /128 are valid ranges.
 	lastTwoChars := ip[len(ip)-2:]
 	if !strings.ContainsRune(ip,'/') {
 		return false
@@ -27,7 +26,6 @@ func isCidrVAlidIpv6(ip string) bool {
 }
 
 func isCidrVAlidIpv4(ip string) bool {
-	// /0 to /32 are valid ranges.
 	lastTwoChars := ip[len(ip)-2:]
 	if !strings.ContainsRune(ip,'/') {
 		return false
@@ -53,7 +51,7 @@ func handleCidr6(ip string) {
 	}
 	firstIP := ipNet.IP
 	for ip := firstIP.Mask(ipNet.Mask); ipNet.Contains(ip); incrementIP(ip) {
-		sendSingleIP(ip.String())
+		sendPacket(ip.String())
 	}
 }
 
@@ -65,6 +63,7 @@ func handleCidr4(ip string) {
 	}
 	firstIP := ipNet.IP
 	for ip := firstIP.Mask(ipNet.Mask); ipNet.Contains(ip); incrementIP(ip) {
-		sendSingleIP(ip.String())
 	}
 }
+
+
