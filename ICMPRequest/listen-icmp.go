@@ -2,26 +2,20 @@ package ICMPRequest
 
 import (
 	"fmt"
+	"syscall"
 	"log"
-	"net"
 )
 
-func listenForICMP(ip string) { 
-	conn, err := net.ListenPacket("ip4:icmp", ip)
-	if err != nil {
-		fmt.Printf("Error listening: %v\n", err)
-		return
-	}
-	defer conn.Close()  
+func listenForICMP(sockfd int) {
+	var buffer [2048]byte
 	for {
-		var buf []byte
-		n, addr, err := conn.ReadFrom(buf)
+		n, _, err := syscall.Recvfrom(sockfd, buffer[:], 0)
 		if err != nil {
-			log.Println("Error reading from connection:", err)
-			continue  
+			log.Fatal("Error receiving packet:", err)
 		}
-		log.Printf("message = '%s' "+
-		"length = %d " + 
-		"source-ip = %s\n", string(buf[:n]), n, addr)
+		fmt.Printf("Captured %d bytes: %x\n", n, buffer[:n])
+		break
 	}
+
 }
+
