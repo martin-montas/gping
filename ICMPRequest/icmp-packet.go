@@ -61,7 +61,7 @@ func stringToByte(ip string) [4]byte {
 	return ipByte
 }
 
-func createRawSocket(ip string) (int ,[]byte, syscall.SockaddrInet4) {
+func createRawSocket(ip string) (int ,[]byte, syscall.SockaddrInet4) { 
 	sock, err := syscall.Socket(syscall.AF_INET, syscall.SOCK_RAW, syscall.IPPROTO_ICMP)
 	if err != nil {
 		log.Fatalf("Failed to create raw socket: %v", err)
@@ -77,10 +77,9 @@ func sendPacket(ip string) {
 	sock, packet, addr := createRawSocket(ip)
 	defer syscall.Close(sock)
 	err := syscall.Sendto(sock, packet, 0, &addr)
-	//  TODO: Wait for a response here:
-	listenForICMP(sock)
 	if err != nil {
 		log.Fatalf("Failed to send packet: %v", err)
 	}
-	fmt.Println("Packet sent successfully!")
+		listenForICMP(sock)
+		fmt.Println("Packet sent successfully!")
 }

@@ -66,7 +66,6 @@ func handleCidr4(ip string) {
 	}
 }
 
-
 func incrementIP(ip net.IP) {
 	for j := len(ip) - 1; j >= 0; j-- {
 		ip[j]++
