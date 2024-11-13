@@ -96,6 +96,7 @@ func setPacket() []byte {
 func sendPacket(ip string) {
 	// Send packet
 	fd := createSocket()
+	defer syscall.Close(fd)
 	packetBytes := setPacket()
 	dst := &syscall.SockaddrInet4 {
 		Port: 0,
@@ -118,7 +119,6 @@ func sendPacket(ip string) {
 		os.Exit(1)
 	}
 	receivePacket(fd)
-	defer syscall.Close(fd)
 }
 
 func receivePacket(fd int) {
@@ -132,5 +132,5 @@ func receivePacket(fd int) {
 	// Parse reply (skip IP header)
 	ipHeaderLen := int(reply[0]&0x0f) * 4
 	icmpReply := reply[ipHeaderLen:n]
-	listenForICMP(icmpReply)
+	RenderPacket(icmpReply)
 }
