@@ -1,11 +1,5 @@
 package ICMPRequest
 
-import (
-	"strings"
-	"fmt"
-	"net"
-	"strconv"
-)
 
 func isCidrVAlidIpv6(ip string) bool {
 	lastTwoChars := ip[len(ip)-2:]
@@ -51,18 +45,20 @@ func handleCidr6(ip string) {
 	}
 	firstIP := ipNet.IP
 	for ip := firstIP.Mask(ipNet.Mask); ipNet.Contains(ip); incrementIP(ip) {
-		sendPacket(ip.String())
+		// sendPacket(ip.String())
 	}
 }
 
 func handleCidr4(ip string) { 
 	_, ipNet, err := net.ParseCIDR(ip)
+	fmt.Printf("ipNet: %v\n", ipNet)
 	if err != nil {
 		fmt.Println("Error parsing CIDR:", err)
 		return
 	}
 	firstIP := ipNet.IP
 	for ip := firstIP.Mask(ipNet.Mask); ipNet.Contains(ip); incrementIP(ip) {
+		// sendPacket(ip.String())
 	}
 }
 
