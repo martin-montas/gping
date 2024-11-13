@@ -81,5 +81,4 @@ func sendPacket(ip string) {
 		log.Fatalf("Failed to send packet: %v", err)
 	}
 		listenForICMP(sock)
-		fmt.Println("Packet sent successfully!")
 }
