@@ -10,7 +10,6 @@ import (
 	"os"
 )
 
-
 // ICMP packet structure
 type icmpPacket struct {
 	Type     uint8
@@ -118,10 +117,10 @@ func sendPacket(ip string) {
 		fmt.Printf("Setting timeout error: %v\n", err)
 		os.Exit(1)
 	}
-	receivePacket(fd)
+	receivePacket(fd,ip)
 }
 
-func receivePacket(fd int) {
+func receivePacket(fd int, ip string) {
 	// Receive reply
 	reply := make([]byte, 1500)
 	n, _, err := syscall.Recvfrom(fd, reply, 0)
@@ -132,5 +131,5 @@ func receivePacket(fd int) {
 	// Parse reply (skip IP header)
 	ipHeaderLen := int(reply[0]&0x0f) * 4
 	icmpReply := reply[ipHeaderLen:n]
-	RenderPacket(icmpReply)
+	RenderPacket(icmpReply,ip)
 }

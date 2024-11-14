@@ -12,3 +12,9 @@ gping -ip 127.0.0.1/24
 
 ## License:
 GNU GPL v3
+
+### Authors:
+@martin-montas
+
+### Future Development:
+- Add support for loggin to a json file
