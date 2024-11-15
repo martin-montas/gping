@@ -17,4 +17,4 @@ GNU GPL v3
 @martin-montas
 
 ### Future Development:
-- Add support for loggin to a json file
+- Add support for loggin to a Json file
